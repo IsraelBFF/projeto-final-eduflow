@@ -3,6 +3,7 @@ import { Library } from "lucide-react";
 import { ComingSoon } from "./index";
 
 export const Route = createFileRoute("/_authenticated/biblioteca")({
+  head: () => ({ meta: [{ title: "Biblioteca — EduGestão" }] }),
   component: () => (
     <ComingSoon
       title="Biblioteca"
