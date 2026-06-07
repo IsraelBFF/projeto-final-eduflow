@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Library } from "lucide-react";
-import { ComingSoon } from "./index";
+import { ComingSoon } from "@/components/ComingSoon";
 
 export const Route = createFileRoute("/_authenticated/biblioteca")({
   head: () => ({ meta: [{ title: "Biblioteca — EduGestão" }] }),

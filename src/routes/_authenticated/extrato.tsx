@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Receipt } from "lucide-react";
-import { ComingSoon } from "./index";
+import { ComingSoon } from "@/components/ComingSoon";
 
 export const Route = createFileRoute("/_authenticated/extrato")({
   component: () => (
