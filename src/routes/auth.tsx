@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { z } from "zod";
 import { toast } from "sonner";
-import { BookOpen, Loader2 } from "lucide-react";
+import { ArrowLeft, GraduationCap, Users, BookOpen, Briefcase, UserCircle2, Loader2 } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth, ROLE_LABELS, type AppRole } from "@/hooks/use-auth";
@@ -27,9 +27,17 @@ const signupSchema = loginSchema.extend({
   role: z.enum(["aluno", "responsavel", "professor", "coordenacao"]),
 });
 
+const ROLE_ICONS: Record<AppRole, typeof GraduationCap> = {
+  aluno: GraduationCap,
+  responsavel: Users,
+  professor: BookOpen,
+  coordenacao: Briefcase,
+};
+
 function AuthPage() {
   const navigate = useNavigate();
   const { session, loading } = useAuth();
+  const [selectedRole, setSelectedRole] = useState<AppRole | null>(null);
 
   useEffect(() => {
     if (!loading && session) void navigate({ to: "/dashboard", replace: true });
@@ -47,20 +55,71 @@ function AuthPage() {
         </div>
 
         <Card className="shadow-xl">
-          <CardHeader>
-            <CardTitle>Bem-vindo</CardTitle>
-            <CardDescription>Acesse sua conta ou cadastre-se.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Tabs defaultValue="login">
-              <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="login">Entrar</TabsTrigger>
-                <TabsTrigger value="signup">Cadastrar</TabsTrigger>
-              </TabsList>
-              <TabsContent value="login" className="mt-4"><LoginForm /></TabsContent>
-              <TabsContent value="signup" className="mt-4"><SignupForm /></TabsContent>
-            </Tabs>
-          </CardContent>
+          {selectedRole === null ? (
+            <>
+              <CardHeader className="items-center text-center">
+                <div className="mx-auto mb-2 flex h-16 w-16 items-center justify-center rounded-full bg-muted">
+                  <UserCircle2 className="h-9 w-9 text-muted-foreground" />
+                </div>
+                <CardTitle>Selecione seu perfil</CardTitle>
+                <CardDescription>Escolha como deseja acessar o sistema.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 gap-3">
+                  {(Object.keys(ROLE_LABELS) as AppRole[]).map((r) => {
+                    const Icon = ROLE_ICONS[r];
+                    return (
+                      <button
+                        key={r}
+                        type="button"
+                        onClick={() => setSelectedRole(r)}
+                        className="group flex flex-col items-center gap-2 rounded-lg border border-border bg-secondary/50 px-4 py-5 transition hover:border-primary hover:bg-primary hover:text-primary-foreground"
+                      >
+                        <Icon className="h-6 w-6 text-primary group-hover:text-primary-foreground" />
+                        <span className="text-sm font-medium">{ROLE_LABELS[r]}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </CardContent>
+            </>
+          ) : (
+            <>
+              <CardHeader>
+                <button
+                  type="button"
+                  onClick={() => setSelectedRole(null)}
+                  className="mb-2 inline-flex items-center gap-1 self-start text-xs text-muted-foreground hover:text-foreground"
+                >
+                  <ArrowLeft className="h-3 w-3" /> Trocar perfil
+                </button>
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
+                    {(() => {
+                      const Icon = ROLE_ICONS[selectedRole];
+                      return <Icon className="h-5 w-5 text-primary" />;
+                    })()}
+                  </div>
+                  <div>
+                    <CardTitle>{ROLE_LABELS[selectedRole]}</CardTitle>
+                    <CardDescription>Acesse sua conta ou cadastre-se.</CardDescription>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <Tabs defaultValue="login">
+                  <TabsList className="grid w-full grid-cols-2">
+                    <TabsTrigger value="login">Entrar</TabsTrigger>
+                    <TabsTrigger value="signup">Cadastrar</TabsTrigger>
+                  </TabsList>
+                  <TabsContent value="login" className="mt-4"><LoginForm /></TabsContent>
+                  <TabsContent value="signup" className="mt-4">
+                    <SignupForm defaultRole={selectedRole} />
+                  </TabsContent>
+                </Tabs>
+              </CardContent>
+            </>
+          )}
         </Card>
       </div>
     </div>
@@ -86,25 +145,25 @@ function LoginForm() {
   return (
     <form onSubmit={onSubmit} className="space-y-4">
       <div className="space-y-2">
-        <Label htmlFor="login-email">E-mail</Label>
-        <Input id="login-email" type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+        <Label htmlFor="login-email">Login</Label>
+        <Input id="login-email" type="email" autoComplete="email" placeholder="seu@email.com" value={email} onChange={(e) => setEmail(e.target.value)} required />
       </div>
       <div className="space-y-2">
         <Label htmlFor="login-password">Senha</Label>
         <Input id="login-password" type="password" autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} required />
       </div>
       <Button type="submit" className="w-full" disabled={busy}>
-        {busy && <Loader2 className="h-4 w-4 animate-spin" />} Entrar
+        {busy && <Loader2 className="h-4 w-4 animate-spin" />} Logar
       </Button>
     </form>
   );
 }
 
-function SignupForm() {
+function SignupForm({ defaultRole }: { defaultRole: AppRole }) {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState<AppRole>("aluno");
+  const [role, setRole] = useState<AppRole>(defaultRole);
   const [busy, setBusy] = useState(false);
 
   async function onSubmit(e: React.FormEvent) {
