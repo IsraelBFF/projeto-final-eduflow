@@ -133,10 +133,7 @@ function Dashboard() {
         {/* Painel lateral do perfil */}
         <Card className="h-fit">
           <CardHeader className="items-center text-center">
-            <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-primary/10 text-primary">
-              <UserCircle2 className="h-12 w-12" />
-            </div>
-            <CardTitle className="text-base mt-2 truncate w-full">
+            <CardTitle className="text-base truncate w-full">
               {user?.email?.split("@")[0]}
             </CardTitle>
             <CardDescription className="text-xs">{ROLE_LABELS[effectiveRole]}</CardDescription>
