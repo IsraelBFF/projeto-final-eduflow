@@ -1,4 +1,4 @@
-import { Link, useRouterState } from "@tanstack/react-router";
+import { Link, useRouterState, useNavigate } from "@tanstack/react-router";
 import {
   LayoutDashboard, BookOpen, GraduationCap, Receipt, Library,
   Bell, MessageSquare, Wallet, LogOut,
@@ -24,6 +24,7 @@ const NAV: NavItem[] = [
 
 export function AppSidebar() {
   const { role, user, signOut } = useAuth();
+  const navigate = useNavigate();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const items = NAV.filter((i) => !role || i.roles.includes(role));
 
@@ -69,7 +70,10 @@ export function AppSidebar() {
         <Button
           variant="ghost"
           size="sm"
-          onClick={() => void signOut()}
+          onClick={async () => {
+            await signOut();
+            void navigate({ to: "/" });
+          }}
           className="justify-start gap-2 text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
         >
           <LogOut className="h-4 w-4" />
