@@ -24,6 +24,7 @@ const NAV: NavItem[] = [
 
 export function AppSidebar() {
   const { role, user, signOut } = useAuth();
+  const navigate = useNavigate();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const items = NAV.filter((i) => !role || i.roles.includes(role));
 
