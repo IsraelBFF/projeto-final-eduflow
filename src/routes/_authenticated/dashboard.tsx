@@ -129,100 +129,74 @@ function Dashboard() {
         <Badge variant="secondary" className="text-sm">{ROLE_LABELS[effectiveRole]}</Badge>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-[260px_1fr]">
-        {/* Painel lateral do perfil */}
-        <Card className="h-fit">
-          <CardHeader className="items-center text-center">
-            <CardTitle className="text-base truncate w-full">
-              {user?.email?.split("@")[0]}
-            </CardTitle>
-            <CardDescription className="text-xs">{ROLE_LABELS[effectiveRole]}</CardDescription>
+      <div className="space-y-4">
+        <div className={`grid gap-4 sm:grid-cols-${Math.min(cfg.stats.length, 3)}`}>
+          {cfg.stats.map((s) => (
+            <Card key={s.label} className="hover:shadow-md transition-shadow">
+              <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+                <CardTitle className="text-sm font-medium text-muted-foreground">
+                  {s.label}
+                </CardTitle>
+                <s.icon className="h-4 w-4 text-primary" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{s.value}</div>
+                {s.hint && <p className="text-xs text-muted-foreground mt-1">{s.hint}</p>}
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>{cfg.chart.title}</CardTitle>
+            <CardDescription>{cfg.chart.description}</CardDescription>
           </CardHeader>
           <CardContent>
-            <nav className="flex flex-col gap-1">
-              {cfg.quickLinks.map((l) => (
-                <Link
-                  key={l.to}
-                  to={l.to}
-                  className="rounded-md px-3 py-2 text-sm text-foreground hover:bg-primary/10 hover:text-primary transition-colors"
-                >
-                  {l.label}
-                </Link>
-              ))}
-            </nav>
+            <div className="h-72 w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                {cfg.chart.type === "bar" ? (
+                  <BarChart data={cfg.chart.data}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                    <XAxis dataKey="name" stroke="hsl(var(--muted-foreground))" fontSize={12} />
+                    <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} />
+                    <Tooltip
+                      contentStyle={{
+                        background: "hsl(var(--card))",
+                        border: "1px solid hsl(var(--border))",
+                        borderRadius: "0.5rem",
+                        fontSize: "0.875rem",
+                      }}
+                    />
+                    <Bar dataKey="value" fill="hsl(var(--primary))" radius={[6, 6, 0, 0]} />
+                  </BarChart>
+                ) : (
+                  <LineChart data={cfg.chart.data}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                    <XAxis dataKey="name" stroke="hsl(var(--muted-foreground))" fontSize={12} />
+                    <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} domain={[0, 10]} />
+                    <Tooltip
+                      contentStyle={{
+                        background: "hsl(var(--card))",
+                        border: "1px solid hsl(var(--border))",
+                        borderRadius: "0.5rem",
+                        fontSize: "0.875rem",
+                      }}
+                    />
+                    <Line
+                      type="monotone"
+                      dataKey="value"
+                      stroke="hsl(var(--primary))"
+                      strokeWidth={3}
+                      dot={{ r: 5, fill: "hsl(var(--primary))" }}
+                      activeDot={{ r: 7 }}
+                    />
+                  </LineChart>
+                )}
+              </ResponsiveContainer>
+            </div>
           </CardContent>
         </Card>
-
-        {/* Conteúdo principal */}
-        <div className="space-y-4">
-          <div className={`grid gap-4 sm:grid-cols-${Math.min(cfg.stats.length, 3)}`}>
-            {cfg.stats.map((s) => (
-              <Card key={s.label} className="hover:shadow-md transition-shadow">
-                <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-                  <CardTitle className="text-sm font-medium text-muted-foreground">
-                    {s.label}
-                  </CardTitle>
-                  <s.icon className="h-4 w-4 text-primary" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">{s.value}</div>
-                  {s.hint && <p className="text-xs text-muted-foreground mt-1">{s.hint}</p>}
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>{cfg.chart.title}</CardTitle>
-              <CardDescription>{cfg.chart.description}</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="h-72 w-full">
-                <ResponsiveContainer width="100%" height="100%">
-                  {cfg.chart.type === "bar" ? (
-                    <BarChart data={cfg.chart.data}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                      <XAxis dataKey="name" stroke="hsl(var(--muted-foreground))" fontSize={12} />
-                      <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} />
-                      <Tooltip
-                        contentStyle={{
-                          background: "hsl(var(--card))",
-                          border: "1px solid hsl(var(--border))",
-                          borderRadius: "0.5rem",
-                          fontSize: "0.875rem",
-                        }}
-                      />
-                      <Bar dataKey="value" fill="hsl(var(--primary))" radius={[6, 6, 0, 0]} />
-                    </BarChart>
-                  ) : (
-                    <LineChart data={cfg.chart.data}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                      <XAxis dataKey="name" stroke="hsl(var(--muted-foreground))" fontSize={12} />
-                      <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} domain={[0, 10]} />
-                      <Tooltip
-                        contentStyle={{
-                          background: "hsl(var(--card))",
-                          border: "1px solid hsl(var(--border))",
-                          borderRadius: "0.5rem",
-                          fontSize: "0.875rem",
-                        }}
-                      />
-                      <Line
-                        type="monotone"
-                        dataKey="value"
-                        stroke="hsl(var(--primary))"
-                        strokeWidth={3}
-                        dot={{ r: 5, fill: "hsl(var(--primary))" }}
-                        activeDot={{ r: 7 }}
-                      />
-                    </LineChart>
-                  )}
-                </ResponsiveContainer>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
       </div>
     </div>
   );
