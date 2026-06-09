@@ -70,7 +70,10 @@ export function AppSidebar() {
         <Button
           variant="ghost"
           size="sm"
-          onClick={() => void signOut()}
+          onClick={async () => {
+            await signOut();
+            void navigate({ to: "/" });
+          }}
           className="justify-start gap-2 text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
         >
           <LogOut className="h-4 w-4" />
