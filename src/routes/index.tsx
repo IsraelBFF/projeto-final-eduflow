@@ -77,14 +77,9 @@ function Index() {
               <Link to="/dashboard">Acessar painel <ArrowRight className="ml-1 h-4 w-4" /></Link>
             </Button>
           ) : (
-            <div className="flex items-center gap-2">
-              <Button asChild variant="ghost" size="sm" className="hidden sm:inline-flex">
-                <Link to="/auth">Entrar</Link>
-              </Button>
-              <Button asChild size="sm">
-                <Link to="/auth">Acessar <ArrowRight className="ml-1 h-4 w-4" /></Link>
-              </Button>
-            </div>
+            <Button asChild size="sm">
+              <Link to="/auth">Acessar <ArrowRight className="ml-1 h-4 w-4" /></Link>
+            </Button>
           )}
         </div>
       </header>
