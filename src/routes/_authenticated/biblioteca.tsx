@@ -15,57 +15,58 @@ export const Route = createFileRoute("/_authenticated/biblioteca")({
 type Livro = { id: string; titulo: string; autor: string; categoria: string; disponivel: boolean; capa: string };
 type Emprestimo = { id: string; titulo: string; autor: string; devolucao: string; capa: string };
 
-// Capas via Open Library Covers API (ISBN) — domínio público / uso editorial
-const cover = (isbn: string) => `https://covers.openlibrary.org/b/isbn/${isbn}-L.jpg`;
+// Capas via Open Library Covers API — domínio público / uso editorial
+const coverIsbn = (isbn: string) => `https://covers.openlibrary.org/b/isbn/${isbn}-L.jpg`;
+const coverId = (id: number) => `https://covers.openlibrary.org/b/id/${id}-L.jpg`;
 
 const CATALOGO: Livro[] = [
   // Literatura brasileira
-  { id: "1",  titulo: "Dom Casmurro",            autor: "Machado de Assis",   categoria: "Literatura", disponivel: true,  capa: cover("8525406958") },
-  { id: "2",  titulo: "Memórias Póstumas de Brás Cubas", autor: "Machado de Assis", categoria: "Literatura", disponivel: true, capa: cover("8525410705") },
-  { id: "3",  titulo: "O Cortiço",               autor: "Aluísio Azevedo",    categoria: "Literatura", disponivel: false, capa: cover("8508133871") },
-  { id: "4",  titulo: "Iracema",                 autor: "José de Alencar",    categoria: "Literatura", disponivel: true,  capa: cover("8572326758") },
-  { id: "5",  titulo: "Capitães da Areia",       autor: "Jorge Amado",        categoria: "Literatura", disponivel: true,  capa: cover("8535911464") },
-  { id: "6",  titulo: "Vidas Secas",             autor: "Graciliano Ramos",   categoria: "Literatura", disponivel: true,  capa: cover("8501012688") },
-  { id: "7",  titulo: "Grande Sertão: Veredas",  autor: "Guimarães Rosa",     categoria: "Literatura", disponivel: false, capa: cover("8520911900") },
-  { id: "8",  titulo: "A Hora da Estrela",       autor: "Clarice Lispector",  categoria: "Literatura", disponivel: true,  capa: cover("8520925030") },
+  { id: "1",  titulo: "Dom Casmurro",            autor: "Machado de Assis",   categoria: "Literatura", disponivel: true,  capa: coverId(647501) },
+  { id: "2",  titulo: "Memórias Póstumas de Brás Cubas", autor: "Machado de Assis", categoria: "Literatura", disponivel: true, capa: coverId(123152) },
+  { id: "3",  titulo: "O Cortiço",               autor: "Aluísio Azevedo",    categoria: "Literatura", disponivel: false, capa: coverId(8176059) },
+  { id: "4",  titulo: "Iracema",                 autor: "José de Alencar",    categoria: "Literatura", disponivel: true,  capa: coverId(2664651) },
+  { id: "5",  titulo: "Capitães da Areia",       autor: "Jorge Amado",        categoria: "Literatura", disponivel: true,  capa: coverId(4178919) },
+  { id: "6",  titulo: "Vidas Secas",             autor: "Graciliano Ramos",   categoria: "Literatura", disponivel: true,  capa: coverId(12369687) },
+  { id: "7",  titulo: "Grande Sertão: Veredas",  autor: "Guimarães Rosa",     categoria: "Literatura", disponivel: false, capa: coverId(13909068) },
+  { id: "8",  titulo: "A Hora da Estrela",       autor: "Clarice Lispector",  categoria: "Literatura", disponivel: true,  capa: coverId(650866) },
 
   // Literatura estrangeira
-  { id: "9",  titulo: "Cem Anos de Solidão",     autor: "Gabriel García Márquez", categoria: "Literatura Estrangeira", disponivel: true, capa: cover("0060883286") },
-  { id: "10", titulo: "1984",                    autor: "George Orwell",      categoria: "Literatura Estrangeira", disponivel: true,  capa: cover("0451524934") },
-  { id: "11", titulo: "O Pequeno Príncipe",      autor: "Antoine de Saint-Exupéry", categoria: "Literatura Estrangeira", disponivel: true, capa: cover("0156012197") },
-  { id: "12", titulo: "Orgulho e Preconceito",   autor: "Jane Austen",        categoria: "Literatura Estrangeira", disponivel: false, capa: cover("0141439513") },
-  { id: "13", titulo: "Crime e Castigo",         autor: "Fiódor Dostoiévski", categoria: "Literatura Estrangeira", disponivel: true,  capa: cover("0140449132") },
+  { id: "9",  titulo: "Cem Anos de Solidão",     autor: "Gabriel García Márquez", categoria: "Literatura Estrangeira", disponivel: true, capa: coverIsbn("0060883286") },
+  { id: "10", titulo: "1984",                    autor: "George Orwell",      categoria: "Literatura Estrangeira", disponivel: true,  capa: coverIsbn("0451524934") },
+  { id: "11", titulo: "O Pequeno Príncipe",      autor: "Antoine de Saint-Exupéry", categoria: "Literatura Estrangeira", disponivel: true, capa: coverIsbn("0156012197") },
+  { id: "12", titulo: "Orgulho e Preconceito",   autor: "Jane Austen",        categoria: "Literatura Estrangeira", disponivel: false, capa: coverIsbn("0141439513") },
+  { id: "13", titulo: "Crime e Castigo",         autor: "Fiódor Dostoiévski", categoria: "Literatura Estrangeira", disponivel: true,  capa: coverIsbn("0140449132") },
 
   // Matemática
-  { id: "14", titulo: "Cálculo Volume 1",        autor: "James Stewart",      categoria: "Matemática", disponivel: true,  capa: cover("8522112584") },
-  { id: "15", titulo: "Álgebra Linear",          autor: "Boldrini",           categoria: "Matemática", disponivel: true,  capa: cover("8570540353") },
-  { id: "16", titulo: "A Matemática do Ensino Médio", autor: "Elon Lages Lima", categoria: "Matemática", disponivel: false, capa: cover("8585818107") },
+  { id: "14", titulo: "Cálculo Volume 1",        autor: "James Stewart",      categoria: "Matemática", disponivel: true,  capa: coverIsbn("8522112584") },
+  { id: "15", titulo: "Álgebra Linear",          autor: "Boldrini",           categoria: "Matemática", disponivel: true,  capa: "" },
+  { id: "16", titulo: "A Matemática do Ensino Médio", autor: "Elon Lages Lima", categoria: "Matemática", disponivel: false, capa: "" },
 
   // Ciências
-  { id: "17", titulo: "Física Conceitual",       autor: "Paul Hewitt",        categoria: "Ciências",   disponivel: true,  capa: cover("8536304006") },
-  { id: "18", titulo: "Fundamentos de Física Vol. 1", autor: "Halliday & Resnick", categoria: "Ciências", disponivel: true, capa: cover("8521630352") },
-  { id: "19", titulo: "Biologia das Células",    autor: "Amabis & Martho",    categoria: "Ciências",   disponivel: true,  capa: cover("8516083357") },
-  { id: "20", titulo: "Química Geral",           autor: "John B. Russell",    categoria: "Ciências",   disponivel: false, capa: cover("8534601925") },
+  { id: "17", titulo: "Física Conceitual",       autor: "Paul Hewitt",        categoria: "Ciências",   disponivel: true,  capa: coverId(7065516) },
+  { id: "18", titulo: "Fundamentos de Física Vol. 1", autor: "Halliday & Resnick", categoria: "Ciências", disponivel: true, capa: coverId(1246724) },
+  { id: "19", titulo: "Biologia das Células",    autor: "Amabis & Martho",    categoria: "Ciências",   disponivel: true,  capa: coverId(13558691) },
+  { id: "20", titulo: "Química Geral",           autor: "John B. Russell",    categoria: "Ciências",   disponivel: false, capa: coverId(2425495) },
 
   // História
-  { id: "21", titulo: "História do Brasil",      autor: "Boris Fausto",       categoria: "História",   disponivel: true,  capa: cover("8531403022") },
-  { id: "22", titulo: "1808",                    autor: "Laurentino Gomes",   categoria: "História",   disponivel: true,  capa: cover("8576653206") },
-  { id: "23", titulo: "Sapiens",                 autor: "Yuval Noah Harari",  categoria: "História",   disponivel: true,  capa: cover("0062316095") },
+  { id: "21", titulo: "História do Brasil",      autor: "Boris Fausto",       categoria: "História",   disponivel: true,  capa: coverIsbn("8531403022") },
+  { id: "22", titulo: "1808",                    autor: "Laurentino Gomes",   categoria: "História",   disponivel: true,  capa: coverIsbn("8576653206") },
+  { id: "23", titulo: "Sapiens",                 autor: "Yuval Noah Harari",  categoria: "História",   disponivel: true,  capa: coverIsbn("0062316095") },
 
   // Geografia
-  { id: "24", titulo: "Geografia Geral e do Brasil", autor: "Demétrio Magnoli", categoria: "Geografia", disponivel: true, capa: cover("8516067955") },
-  { id: "25", titulo: "Atlas Geográfico Mundial", autor: "Saraiva",            categoria: "Geografia",  disponivel: true,  capa: cover("8536503823") },
+  { id: "24", titulo: "Geografia Geral e do Brasil", autor: "Demétrio Magnoli", categoria: "Geografia", disponivel: true, capa: "" },
+  { id: "25", titulo: "Atlas Geográfico Mundial", autor: "Saraiva",            categoria: "Geografia",  disponivel: true,  capa: coverId(14582252) },
 
   // Idiomas
-  { id: "26", titulo: "English Grammar in Use",  autor: "Raymond Murphy",     categoria: "Idiomas",    disponivel: false, capa: cover("0521189063") },
-  { id: "27", titulo: "Gramática Houaiss",       autor: "José Carlos Azeredo",categoria: "Idiomas",    disponivel: true,  capa: cover("8576801728") },
-  { id: "28", titulo: "Le Petit Larousse",       autor: "Larousse",           categoria: "Idiomas",    disponivel: true,  capa: cover("2035840872") },
+  { id: "26", titulo: "English Grammar in Use",  autor: "Raymond Murphy",     categoria: "Idiomas",    disponivel: false, capa: coverIsbn("0521189063") },
+  { id: "27", titulo: "Gramática Houaiss",       autor: "José Carlos Azeredo",categoria: "Idiomas",    disponivel: true,  capa: "" },
+  { id: "28", titulo: "Le Petit Larousse",       autor: "Larousse",           categoria: "Idiomas",    disponivel: true,  capa: coverId(965175) },
 ];
 
 const EMPRESTIMOS_INICIAIS: Emprestimo[] = [
-  { id: "e1", titulo: "Iracema",                  autor: "José de Alencar", devolucao: "15/06/2026", capa: cover("8572326758") },
-  { id: "e2", titulo: "Álgebra Linear",           autor: "Boldrini",        devolucao: "22/06/2026", capa: cover("8570540353") },
-  { id: "e3", titulo: "O Pequeno Príncipe",       autor: "Antoine de Saint-Exupéry", devolucao: "30/06/2026", capa: cover("0156012197") },
+  { id: "e1", titulo: "Iracema",                  autor: "José de Alencar", devolucao: "15/06/2026", capa: coverId(2664651) },
+  { id: "e2", titulo: "Álgebra Linear",           autor: "Boldrini",        devolucao: "22/06/2026", capa: "" },
+  { id: "e3", titulo: "O Pequeno Príncipe",       autor: "Antoine de Saint-Exupéry", devolucao: "30/06/2026", capa: coverIsbn("0156012197") },
 ];
 
 type View = "home" | "alugar" | "renovar";
