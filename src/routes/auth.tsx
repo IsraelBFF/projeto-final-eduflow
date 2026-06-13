@@ -112,7 +112,7 @@ function AuthPage() {
                     <TabsTrigger value="login">Entrar</TabsTrigger>
                     <TabsTrigger value="signup">Cadastrar</TabsTrigger>
                   </TabsList>
-                  <TabsContent value="login" className="mt-4"><LoginForm /></TabsContent>
+                  <TabsContent value="login" className="mt-4"><LoginForm expectedRole={selectedRole} /></TabsContent>
                   <TabsContent value="signup" className="mt-4">
                     <SignupForm defaultRole={selectedRole} />
                   </TabsContent>
