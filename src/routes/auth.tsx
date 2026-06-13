@@ -126,7 +126,7 @@ function AuthPage() {
   );
 }
 
-function LoginForm() {
+function LoginForm({ expectedRole }: { expectedRole: AppRole }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
@@ -136,9 +136,25 @@ function LoginForm() {
     const parsed = loginSchema.safeParse({ email, password });
     if (!parsed.success) { toast.error(parsed.error.errors[0].message); return; }
     setBusy(true);
-    const { error } = await supabase.auth.signInWithPassword(parsed.data);
+    const { data, error } = await supabase.auth.signInWithPassword(parsed.data);
+    if (error) { setBusy(false); toast.error("Falha no login: " + error.message); return; }
+
+    const userId = data.user?.id;
+    if (userId) {
+      const { data: roleRow } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", userId)
+        .eq("role", expectedRole)
+        .maybeSingle();
+      if (!roleRow) {
+        await supabase.auth.signOut();
+        setBusy(false);
+        toast.error(`Este e-mail não está cadastrado como ${ROLE_LABELS[expectedRole]}.`);
+        return;
+      }
+    }
     setBusy(false);
-    if (error) { toast.error("Falha no login: " + error.message); return; }
     toast.success("Login realizado!");
   }
 
