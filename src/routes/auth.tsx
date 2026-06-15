@@ -113,7 +113,7 @@ function AuthPage() {
                   </TabsList>
                   <TabsContent value="login" className="mt-4"><LoginForm expectedRole={selectedRole} /></TabsContent>
                   <TabsContent value="signup" className="mt-4">
-                    <SignupForm defaultRole={selectedRole} />
+                    <SignupForm />
                   </TabsContent>
                 </Tabs>
               </CardContent>
