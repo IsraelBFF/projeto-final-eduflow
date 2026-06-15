@@ -108,10 +108,14 @@ function BibliotecaPage() {
   }
 
   function renovar(e: Emprestimo) {
+    if (e.renovado) {
+      toast.error(`"${e.titulo}" já foi renovado. Cada livro permite apenas uma renovação.`);
+      return;
+    }
     const [d, m, y] = e.devolucao.split("/").map(Number);
     const data = new Date(y, m - 1, d); data.setDate(data.getDate() + 14);
-    setEmprestimos(emprestimos.map((x) => x.id === e.id ? { ...x, devolucao: data.toLocaleDateString("pt-BR") } : x));
-    toast.success(`"${e.titulo}" renovado até ${data.toLocaleDateString("pt-BR")}.`);
+    setEmprestimos(emprestimos.map((x) => x.id === e.id ? { ...x, devolucao: data.toLocaleDateString("pt-BR"), renovado: true } : x));
+    toast.success(`"${e.titulo}" renovado até ${data.toLocaleDateString("pt-BR")}. Esta foi sua única renovação para este livro.`);
   }
 
   return (
