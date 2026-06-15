@@ -13,7 +13,7 @@ export const Route = createFileRoute("/_authenticated/biblioteca")({
 });
 
 type Livro = { id: string; titulo: string; autor: string; categoria: string; disponivel: boolean; capa: string };
-type Emprestimo = { id: string; titulo: string; autor: string; devolucao: string; capa: string };
+type Emprestimo = { id: string; titulo: string; autor: string; devolucao: string; capa: string; renovado?: boolean };
 
 // Capas via Open Library Covers API — domínio público / uso editorial
 const coverIsbn = (isbn: string) => `https://covers.openlibrary.org/b/isbn/${isbn}-L.jpg`;
@@ -108,10 +108,14 @@ function BibliotecaPage() {
   }
 
   function renovar(e: Emprestimo) {
+    if (e.renovado) {
+      toast.error(`"${e.titulo}" já foi renovado. Cada livro permite apenas uma renovação.`);
+      return;
+    }
     const [d, m, y] = e.devolucao.split("/").map(Number);
     const data = new Date(y, m - 1, d); data.setDate(data.getDate() + 14);
-    setEmprestimos(emprestimos.map((x) => x.id === e.id ? { ...x, devolucao: data.toLocaleDateString("pt-BR") } : x));
-    toast.success(`"${e.titulo}" renovado até ${data.toLocaleDateString("pt-BR")}.`);
+    setEmprestimos(emprestimos.map((x) => x.id === e.id ? { ...x, devolucao: data.toLocaleDateString("pt-BR"), renovado: true } : x));
+    toast.success(`"${e.titulo}" renovado até ${data.toLocaleDateString("pt-BR")}. Esta foi sua única renovação para este livro.`);
   }
 
   return (
@@ -188,21 +192,29 @@ function BibliotecaPage() {
       )}
 
       {view === "renovar" && (
-        <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
-          {emprestimos.map((e) => (
-            <Card key={e.id}>
-              <CardHeader className="pb-2">
-                <CapaLivro src={e.capa} titulo={e.titulo} />
-                <CardTitle className="text-sm">{e.titulo}</CardTitle>
-                <CardDescription className="text-xs">{e.autor}</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-2 pt-2">
-                <Badge variant="secondary">Devolução: {e.devolucao}</Badge>
-                <Button size="sm" className="w-full" onClick={() => renovar(e)}>Renovar</Button>
-              </CardContent>
-            </Card>
-          ))}
-          {emprestimos.length === 0 && <p className="text-sm text-muted-foreground col-span-full">Você não possui empréstimos ativos.</p>}
+        <div className="space-y-4">
+          <div className="rounded-md border border-primary/30 bg-primary/5 px-4 py-3 text-sm text-muted-foreground">
+            Atenção: cada livro emprestado permite apenas <span className="font-semibold text-foreground">uma renovação</span>. Após renovar, não será possível estender o prazo novamente para o mesmo título.
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
+            {emprestimos.map((e) => (
+              <Card key={e.id}>
+                <CardHeader className="pb-2">
+                  <CapaLivro src={e.capa} titulo={e.titulo} />
+                  <CardTitle className="text-sm">{e.titulo}</CardTitle>
+                  <CardDescription className="text-xs">{e.autor}</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-2 pt-2">
+                  <Badge variant="secondary">Devolução: {e.devolucao}</Badge>
+                  {e.renovado && <Badge variant="outline" className="ml-2">Já renovado</Badge>}
+                  <Button size="sm" className="w-full" onClick={() => renovar(e)} disabled={e.renovado}>
+                    {e.renovado ? "Renovação utilizada" : "Renovar"}
+                  </Button>
+                </CardContent>
+              </Card>
+            ))}
+            {emprestimos.length === 0 && <p className="text-sm text-muted-foreground col-span-full">Você não possui empréstimos ativos.</p>}
+          </div>
         </div>
       )}
     </div>
