@@ -24,7 +24,6 @@ const loginSchema = z.object({
 });
 const signupSchema = loginSchema.extend({
   fullName: z.string().trim().min(2, "Informe seu nome").max(100),
-  role: z.enum(["aluno", "responsavel", "professor", "coordenacao"]),
 });
 
 const ROLE_ICONS: Record<AppRole, typeof GraduationCap> = {
