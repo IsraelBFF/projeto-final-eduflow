@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+
 
 export const Route = createFileRoute("/auth")({
   head: () => ({ meta: [{ title: "Entrar — EduGestão" }] }),
@@ -24,7 +24,6 @@ const loginSchema = z.object({
 });
 const signupSchema = loginSchema.extend({
   fullName: z.string().trim().min(2, "Informe seu nome").max(100),
-  role: z.enum(["aluno", "responsavel", "professor", "coordenacao"]),
 });
 
 const ROLE_ICONS: Record<AppRole, typeof GraduationCap> = {
@@ -114,7 +113,7 @@ function AuthPage() {
                   </TabsList>
                   <TabsContent value="login" className="mt-4"><LoginForm expectedRole={selectedRole} /></TabsContent>
                   <TabsContent value="signup" className="mt-4">
-                    <SignupForm defaultRole={selectedRole} />
+                    <SignupForm />
                   </TabsContent>
                 </Tabs>
               </CardContent>
@@ -175,16 +174,15 @@ function LoginForm({ expectedRole }: { expectedRole: AppRole }) {
   );
 }
 
-function SignupForm({ defaultRole }: { defaultRole: AppRole }) {
+function SignupForm() {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState<AppRole>(defaultRole);
   const [busy, setBusy] = useState(false);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    const parsed = signupSchema.safeParse({ fullName, email, password, role });
+    const parsed = signupSchema.safeParse({ fullName, email, password });
     if (!parsed.success) { toast.error(parsed.error.errors[0].message); return; }
     setBusy(true);
     const { error } = await supabase.auth.signUp({
@@ -192,7 +190,7 @@ function SignupForm({ defaultRole }: { defaultRole: AppRole }) {
       password: parsed.data.password,
       options: {
         emailRedirectTo: `${window.location.origin}/dashboard`,
-        data: { full_name: parsed.data.fullName, role: parsed.data.role },
+        data: { full_name: parsed.data.fullName },
       },
     });
     setBusy(false);
@@ -213,17 +211,6 @@ function SignupForm({ defaultRole }: { defaultRole: AppRole }) {
       <div className="space-y-2">
         <Label htmlFor="su-password">Senha</Label>
         <Input id="su-password" type="password" autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)} required />
-      </div>
-      <div className="space-y-2">
-        <Label>Perfil de acesso</Label>
-        <Select value={role} onValueChange={(v) => setRole(v as AppRole)}>
-          <SelectTrigger><SelectValue /></SelectTrigger>
-          <SelectContent>
-            {(Object.keys(ROLE_LABELS) as AppRole[]).map((r) => (
-              <SelectItem key={r} value={r}>{ROLE_LABELS[r]}</SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
       </div>
       <Button type="submit" className="w-full" disabled={busy}>
         {busy && <Loader2 className="h-4 w-4 animate-spin" />} Criar conta
