@@ -174,16 +174,15 @@ function LoginForm({ expectedRole }: { expectedRole: AppRole }) {
   );
 }
 
-function SignupForm({ defaultRole }: { defaultRole: AppRole }) {
+function SignupForm() {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState<AppRole>(defaultRole);
   const [busy, setBusy] = useState(false);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    const parsed = signupSchema.safeParse({ fullName, email, password, role });
+    const parsed = signupSchema.safeParse({ fullName, email, password });
     if (!parsed.success) { toast.error(parsed.error.errors[0].message); return; }
     setBusy(true);
     const { error } = await supabase.auth.signUp({
@@ -191,7 +190,7 @@ function SignupForm({ defaultRole }: { defaultRole: AppRole }) {
       password: parsed.data.password,
       options: {
         emailRedirectTo: `${window.location.origin}/dashboard`,
-        data: { full_name: parsed.data.fullName, role: parsed.data.role },
+        data: { full_name: parsed.data.fullName },
       },
     });
     setBusy(false);
@@ -212,17 +211,6 @@ function SignupForm({ defaultRole }: { defaultRole: AppRole }) {
       <div className="space-y-2">
         <Label htmlFor="su-password">Senha</Label>
         <Input id="su-password" type="password" autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)} required />
-      </div>
-      <div className="space-y-2">
-        <Label>Perfil de acesso</Label>
-        <Select value={role} onValueChange={(v) => setRole(v as AppRole)}>
-          <SelectTrigger><SelectValue /></SelectTrigger>
-          <SelectContent>
-            {(Object.keys(ROLE_LABELS) as AppRole[]).map((r) => (
-              <SelectItem key={r} value={r}>{ROLE_LABELS[r]}</SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
       </div>
       <Button type="submit" className="w-full" disabled={busy}>
         {busy && <Loader2 className="h-4 w-4 animate-spin" />} Criar conta
