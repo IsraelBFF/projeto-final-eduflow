@@ -13,7 +13,7 @@ export const Route = createFileRoute("/_authenticated/biblioteca")({
 });
 
 type Livro = { id: string; titulo: string; autor: string; categoria: string; disponivel: boolean; capa: string };
-type Emprestimo = { id: string; titulo: string; autor: string; devolucao: string; capa: string };
+type Emprestimo = { id: string; titulo: string; autor: string; devolucao: string; capa: string; renovado?: boolean };
 
 // Capas via Open Library Covers API — domínio público / uso editorial
 const coverIsbn = (isbn: string) => `https://covers.openlibrary.org/b/isbn/${isbn}-L.jpg`;
